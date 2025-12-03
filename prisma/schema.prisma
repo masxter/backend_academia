@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  email    String   @unique
+  senha    String
+  nome     String
+  criadoEm DateTime @default(now())
+}
+
+model Aluno {
+  id                  Int       @id @default(autoincrement())
+  nome                String
+  telefone            String
+  peso                Float
+  altura              Float
+  bracoEsquerdo       Float
+  bracoDireito        Float
+  cochaEsquerda       Float
+  cochaDireita        Float
+  abdomen             Float
+  panturrilhaEsquerda Float
+  panturrilhaDireita  Float
+  cintura             Float
+  quadril             Float
+  busto               Float
+  gorduraCorporal     Float
+  gorduraVisceral     Float
+  musculatura         Float
+  indiceMassa         Float
+  idadeCorporal       Int
+  kcal                Float
+  ativo               Boolean   @default(true)
+  dataCriacao         DateTime  @default(now())
+  ultimaPesagem       DateTime?
+
+  evolucoes EvolucaoFisica[] // ← campo que faltava
+  pagamentos    Pagamento[]  // relação 1:N (um aluno pode ter vários pagamentos)
+
+}
+
+model EvolucaoFisica {
+  id                  Int      @id @default(autoincrement())
+  alunoId             Int
+  data                DateTime @default(now())
+  peso                Float
+  altura              Float
+  bracoDireito        Float
+  bracoEsquerdo       Float
+  cochaDireita        Float
+  cochaEsquerda       Float
+  abdomen             Float
+  panturrilhaDireita  Float
+  panturrilhaEsquerda Float
+  cintura             Float
+  quadril             Float
+  busto               Float
+  gorduraCorporal     Float
+  gorduraVisceral     Float
+  musculatura         Float
+  indiceMassa         Float
+  idadeCorporal       Int
+  kcal                Float
+  aluno               Aluno    @relation(fields: [alunoId], references: [id])
+}
+
+model Pagamento {
+  id            Int      @id @default(autoincrement())
+  valor         Float    // valor do pagamento
+  dataPagamento DateTime // data em que foi feito
+  usuarioId     Int      // id do aluno/usuário que pagou
+
+  // Relacionamento com a tabela Aluno
+  aluno       Aluno    @relation(fields: [usuarioId], references: [id])
+  createdAt     DateTime @default(now())
+}
